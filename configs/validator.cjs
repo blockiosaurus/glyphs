@@ -11,9 +11,9 @@ module.exports = {
     commitment: "processed",
     programs: [
       {
-        label: "Mpl Project Name",
-        programId: "MyProgram1111111111111111111111111111111111",
-        deployPath: getProgram("mpl_project_name_program.so"),
+        label: "Bgl Glyphs",
+        programId: "GLYPHQ8TkcUZYrdbMLkfWUzfdKPyCc9JLf987iNY5MAs",
+        deployPath: getProgram("bgl_glyphs_program.so"),
       },
       // Below are external programs that should be included in the local validator.
       // You may configure which ones to fetch from the cluster when building

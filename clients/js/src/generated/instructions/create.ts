@@ -78,8 +78,8 @@ export function create(
 ): TransactionBuilder {
   // Program ID.
   const programId = context.programs.getPublicKey(
-    'mplProjectName',
-    'MyProgram1111111111111111111111111111111111'
+    'bglGlyphs',
+    'GLYPHQ8TkcUZYrdbMLkfWUzfdKPyCc9JLf987iNY5MAs'
   );
 
   // Accounts.

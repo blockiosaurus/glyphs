@@ -4,9 +4,9 @@ use solana_program::{
     rent::Rent, system_instruction, system_program, sysvar::Sysvar,
 };
 
-use crate::error::MplProjectNameError;
+use crate::error::BglGlyphsError;
 use crate::instruction::accounts::CreateAccounts;
-use crate::instruction::{CreateArgs, MplProjectNameInstruction};
+use crate::instruction::{CreateArgs, BglGlyphsInstruction};
 use crate::state::{Key, MyAccount, MyData};
 
 pub fn process_instruction<'a>(
@@ -14,10 +14,10 @@ pub fn process_instruction<'a>(
     accounts: &'a [AccountInfo<'a>],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    let instruction: MplProjectNameInstruction =
-        MplProjectNameInstruction::try_from_slice(instruction_data)?;
+    let instruction: BglGlyphsInstruction =
+        BglGlyphsInstruction::try_from_slice(instruction_data)?;
     match instruction {
-        MplProjectNameInstruction::Create(args) => {
+        BglGlyphsInstruction::Create(args) => {
             msg!("Instruction: Create");
             create(accounts, args)
         }
@@ -31,7 +31,7 @@ fn create<'a>(accounts: &'a [AccountInfo<'a>], args: CreateArgs) -> ProgramResul
 
     // Guards.
     if *ctx.accounts.system_program.key != system_program::id() {
-        return Err(MplProjectNameError::InvalidSystemProgram.into());
+        return Err(BglGlyphsError::InvalidSystemProgram.into());
     }
 
     // Fetch the space and minimum lamports required for rent exemption.

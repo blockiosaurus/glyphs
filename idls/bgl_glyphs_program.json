@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "name": "mpl_project_name_program",
+  "name": "bgl_glyphs_program",
   "instructions": [
     {
       "name": "Create",
@@ -166,8 +166,8 @@
   ],
   "metadata": {
     "origin": "shank",
-    "address": "MyProgram1111111111111111111111111111111111",
-    "binaryVersion": "0.3.0",
-    "libVersion": "0.3.0"
+    "address": "GLYPHQ8TkcUZYrdbMLkfWUzfdKPyCc9JLf987iNY5MAs",
+    "binaryVersion": "0.4.2",
+    "libVersion": "0.4.2"
   }
 }

@@ -1,6 +1,6 @@
-# Mpl Project Name
+# Bgl Glyphs
 
-My project description
+Discover Glyphs and uncover their true meaning.
 
 ## Building
 
