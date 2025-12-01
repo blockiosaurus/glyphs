@@ -1,67 +1,147 @@
 use borsh::BorshDeserialize;
+use mpl_core::instructions::CreateV1CpiBuilder;
+use mpl_core::types::{Attribute, Attributes, Plugin, PluginAuthority, PluginAuthorityPair};
+use mpl_utils::create_or_allocate_account_raw;
+use solana_program::clock::Clock;
+use solana_program::epoch_schedule::EpochSchedule;
 use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, msg, program::invoke, pubkey::Pubkey,
-    rent::Rent, system_instruction, system_program, sysvar::Sysvar,
+    account_info::AccountInfo, entrypoint::ProgramResult, msg, pubkey::Pubkey, system_program,
+    sysvar::Sysvar,
 };
 
 use crate::error::BglGlyphsError;
-use crate::instruction::accounts::CreateAccounts;
-use crate::instruction::{CreateArgs, BglGlyphsInstruction};
-use crate::state::{Key, MyAccount, MyData};
+use crate::instruction::accounts::ExcavateAccounts;
+use crate::instruction::{BglGlyphsInstruction, ExcavateArgs};
+use crate::state::{
+    Key, Rarity, SlotTracker, GLOBAL_SIGNER, GLOBAL_SIGNER_BUMP, GLOBAL_SIGNER_KEY, PREFIX,
+    SLOT_TRACKER, SLOT_TRACKER_BUMP, SLOT_TRACKER_KEY,
+};
 
 pub fn process_instruction<'a>(
     _program_id: &Pubkey,
     accounts: &'a [AccountInfo<'a>],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    let instruction: BglGlyphsInstruction =
-        BglGlyphsInstruction::try_from_slice(instruction_data)?;
+    let instruction: BglGlyphsInstruction = BglGlyphsInstruction::try_from_slice(instruction_data)?;
     match instruction {
-        BglGlyphsInstruction::Create(args) => {
-            msg!("Instruction: Create");
-            create(accounts, args)
+        BglGlyphsInstruction::Excavate(args) => {
+            msg!("Instruction: Excavate");
+            excavate(accounts, args)
         }
     }
 }
 
-fn create<'a>(accounts: &'a [AccountInfo<'a>], args: CreateArgs) -> ProgramResult {
+fn excavate<'a>(accounts: &'a [AccountInfo<'a>], _args: ExcavateArgs) -> ProgramResult {
     // Accounts.
-    let ctx = CreateAccounts::context(accounts)?;
-    let rent = Rent::get()?;
+    let ctx = ExcavateAccounts::context(accounts)?;
+    let clock = Clock::get()?;
+    let epoch_schedule = EpochSchedule::get()?;
+
+    solana_program::msg!("Clock: {:?}", clock);
+    solana_program::msg!("Epoch: {:?}", epoch_schedule);
+    solana_program::msg!(
+        "1st Slot: {:?}",
+        epoch_schedule.get_first_slot_in_epoch(clock.epoch)
+    );
+
+    solana_program::msg!("Rarity: {:?}", Rarity::get_rarity()?);
 
     // Guards.
-    if *ctx.accounts.system_program.key != system_program::id() {
+    if *ctx.accounts.slot_tracker.key != SLOT_TRACKER_KEY {
+        return Err(BglGlyphsError::InvalidSlotTracker.into());
+    }
+
+    if *ctx.accounts.glyph_signer.key != GLOBAL_SIGNER_KEY {
+        return Err(BglGlyphsError::InvalidGlyphSigner.into());
+    }
+
+    if *ctx.accounts.system_program.key != system_program::ID {
         return Err(BglGlyphsError::InvalidSystemProgram.into());
     }
 
-    // Fetch the space and minimum lamports required for rent exemption.
-    let space: usize = MyAccount::LEN;
-    let lamports: u64 = rent.minimum_balance(space);
+    if *ctx.accounts.mpl_core.key != mpl_core::ID {
+        return Err(BglGlyphsError::InvalidMplCoreProgram.into());
+    }
 
-    // CPI to the System Program.
-    invoke(
-        &system_instruction::create_account(
-            ctx.accounts.payer.key,
-            ctx.accounts.address.key,
-            lamports,
-            space as u64,
-            &crate::id(),
-        ),
-        &[
-            ctx.accounts.payer.clone(),
-            ctx.accounts.address.clone(),
-            ctx.accounts.system_program.clone(),
-        ],
-    )?;
+    // Execute the instruction.
+    let current_slot = Clock::get()?.slot;
 
-    let my_account = MyAccount {
-        key: Key::MyAccount,
-        authority: *ctx.accounts.authority.key,
-        data: MyData {
-            field1: args.arg1,
-            field2: args.arg2,
-        },
+    // let (tracker, tracker_bump) =
+    //     Pubkey::find_program_address(&[PREFIX.as_bytes(), SLOT_TRACKER.as_bytes()], &crate::ID);
+    // solana_program::msg!("Tracker: {:?}, Bump: {:?}", tracker, tracker_bump);
+
+    // Create the slot tracker if it doesn't exist.
+    let mut slot_tracker = if *ctx.accounts.slot_tracker.owner == system_program::ID
+        && ctx.accounts.slot_tracker.data_is_empty()
+    {
+        create_or_allocate_account_raw(
+            crate::ID,
+            ctx.accounts.slot_tracker,
+            ctx.accounts.system_program,
+            ctx.accounts.payer,
+            SlotTracker::LEN,
+            &[
+                PREFIX.as_bytes(),
+                SLOT_TRACKER.as_bytes(),
+                &[SLOT_TRACKER_BUMP],
+            ],
+        )?;
+
+        SlotTracker {
+            key: Key::SlotTracker,
+            last_slot: current_slot - 1,
+        }
+    } else {
+        SlotTracker::load(ctx.accounts.slot_tracker)?
     };
 
-    my_account.save(ctx.accounts.address)
+    if slot_tracker.last_slot >= current_slot {
+        return Err(BglGlyphsError::AlreadyExcavated.into());
+    } else {
+        slot_tracker.last_slot = current_slot;
+    }
+
+    slot_tracker.save(ctx.accounts.slot_tracker)?;
+
+    let rarity = Rarity::get_rarity()?;
+
+    // let (signer, bump) =
+    //     Pubkey::find_program_address(&[PREFIX.as_bytes(), GLOBAL_SIGNER.as_bytes()], &crate::ID);
+    // solana_program::msg!("Signer: {:?}, Bump: {:?}", signer, bump);
+
+    // Create the Asset.
+    CreateV1CpiBuilder::new(ctx.accounts.mpl_core)
+        .asset(ctx.accounts.asset)
+        .collection(Some(ctx.accounts.collection))
+        .payer(ctx.accounts.payer)
+        .authority(Some(ctx.accounts.glyph_signer))
+        .system_program(ctx.accounts.system_program)
+        .name("TEST NAME".to_owned())
+        .uri("TEST_URI".to_owned())
+        .plugins(vec![PluginAuthorityPair {
+            plugin: Plugin::Attributes(Attributes {
+                attribute_list: vec![
+                    Attribute {
+                        key: "Rarity".to_owned(),
+                        value: rarity.to_string(),
+                    },
+                    Attribute {
+                        key: "Epoch".to_owned(),
+                        value: clock.epoch.to_string(),
+                    },
+                    Attribute {
+                        key: "Slot".to_owned(),
+                        value: clock.slot.to_string(),
+                    },
+                ],
+            }),
+            authority: Some(PluginAuthority::None),
+        }])
+        .invoke_signed(&[&[
+            PREFIX.as_bytes(),
+            GLOBAL_SIGNER.as_bytes(),
+            &[GLOBAL_SIGNER_BUMP],
+        ]])?;
+
+    Ok(())
 }

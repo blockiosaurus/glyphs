@@ -11,12 +11,34 @@ pub enum BglGlyphsError {
     /// 0 - Invalid System Program
     #[error("Invalid System Program")]
     InvalidSystemProgram,
+
     /// 1 - Error deserializing account
     #[error("Error deserializing account")]
     DeserializationError,
+
     /// 2 - Error serializing account
     #[error("Error serializing account")]
     SerializationError,
+
+    /// 3 - Invalid MPL Core Program
+    #[error("Invalid MPL Core Program")]
+    InvalidMplCoreProgram,
+
+    /// 4 - Invalid Slot Tracker
+    #[error("Invalid Slot Tracker")]
+    InvalidSlotTracker,
+
+    /// 5 - Invalid Glyph Signer
+    #[error("Invalid Glyph Signer")]
+    InvalidGlyphSigner,
+
+    /// 6 - Numerical Overflow
+    #[error("Numerical Overflow")]
+    NumericalOverflow,
+
+    /// 7 - Already Excavated
+    #[error("Already Excavated")]
+    AlreadyExcavated,
 }
 
 impl PrintProgramError for BglGlyphsError {

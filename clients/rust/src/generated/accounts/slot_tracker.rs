@@ -6,25 +6,18 @@
 //!
 
 use crate::generated::types::Key;
-use crate::generated::types::MyData;
 use borsh::BorshDeserialize;
 use borsh::BorshSerialize;
-use solana_program::pubkey::Pubkey;
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct MyAccount {
+pub struct SlotTracker {
     pub key: Key,
-    #[cfg_attr(
-        feature = "serde",
-        serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
-    )]
-    pub authority: Pubkey,
-    pub data: MyData,
+    pub last_slot: u64,
 }
 
-impl MyAccount {
-    pub const LEN: usize = 39;
+impl SlotTracker {
+    pub const LEN: usize = 9;
 
     #[inline(always)]
     pub fn from_bytes(data: &[u8]) -> Result<Self, std::io::Error> {
@@ -33,7 +26,7 @@ impl MyAccount {
     }
 }
 
-impl<'a> TryFrom<&solana_program::account_info::AccountInfo<'a>> for MyAccount {
+impl<'a> TryFrom<&solana_program::account_info::AccountInfo<'a>> for SlotTracker {
     type Error = std::io::Error;
 
     fn try_from(

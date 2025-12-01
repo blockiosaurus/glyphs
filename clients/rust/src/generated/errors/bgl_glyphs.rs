@@ -19,6 +19,21 @@ pub enum BglGlyphsError {
     /// 2 (0x2) - Error serializing account
     #[error("Error serializing account")]
     SerializationError,
+    /// 3 (0x3) - Invalid MPL Core Program
+    #[error("Invalid MPL Core Program")]
+    InvalidMplCoreProgram,
+    /// 4 (0x4) - Invalid Slot Tracker
+    #[error("Invalid Slot Tracker")]
+    InvalidSlotTracker,
+    /// 5 (0x5) - Invalid Glyph Signer
+    #[error("Invalid Glyph Signer")]
+    InvalidGlyphSigner,
+    /// 6 (0x6) - Numerical Overflow
+    #[error("Numerical Overflow")]
+    NumericalOverflow,
+    /// 7 (0x7) - Already Excavated
+    #[error("Already Excavated")]
+    AlreadyExcavated,
 }
 
 impl solana_program::program_error::PrintProgramError for BglGlyphsError {

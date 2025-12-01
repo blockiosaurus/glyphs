@@ -7,7 +7,6 @@
  */
 
 import {
-  ACCOUNT_HEADER_SIZE,
   Context,
   Pda,
   PublicKey,
@@ -19,11 +18,8 @@ import {
   Serializer,
   mapSerializer,
   struct,
-  u16,
-  u32,
   u8,
 } from '@metaplex-foundation/umi/serializers';
-import { getMyAccountSize } from '../accounts';
 import {
   ResolvedAccount,
   ResolvedAccountsWithIndices,
@@ -31,50 +27,48 @@ import {
 } from '../shared';
 
 // Accounts.
-export type CreateInstructionAccounts = {
-  /** The address of the new account */
-  address: Signer;
-  /** The authority of the new account */
-  authority?: PublicKey | Pda;
+export type ExcavateInstructionAccounts = {
+  /** The asset to be created */
+  asset: Signer;
+  /** The collection to which the asset belongs */
+  collection: PublicKey | Pda;
   /** The account paying for the storage fees */
   payer?: Signer;
+  /** The slot tracker account */
+  slotTracker: PublicKey | Pda;
+  /** The global signer for the Glyph program */
+  glyphSigner: PublicKey | Pda;
   /** The system program */
   systemProgram?: PublicKey | Pda;
+  /** The mpl_core program */
+  mplCore: PublicKey | Pda;
 };
 
 // Data.
-export type CreateInstructionData = {
-  discriminator: number;
-  arg1: number;
-  arg2: number;
-};
+export type ExcavateInstructionData = { discriminator: number };
 
-export type CreateInstructionDataArgs = { arg1: number; arg2: number };
+export type ExcavateInstructionDataArgs = {};
 
-export function getCreateInstructionDataSerializer(): Serializer<
-  CreateInstructionDataArgs,
-  CreateInstructionData
+export function getExcavateInstructionDataSerializer(): Serializer<
+  ExcavateInstructionDataArgs,
+  ExcavateInstructionData
 > {
-  return mapSerializer<CreateInstructionDataArgs, any, CreateInstructionData>(
-    struct<CreateInstructionData>(
-      [
-        ['discriminator', u8()],
-        ['arg1', u16()],
-        ['arg2', u32()],
-      ],
-      { description: 'CreateInstructionData' }
-    ),
+  return mapSerializer<
+    ExcavateInstructionDataArgs,
+    any,
+    ExcavateInstructionData
+  >(
+    struct<ExcavateInstructionData>([['discriminator', u8()]], {
+      description: 'ExcavateInstructionData',
+    }),
     (value) => ({ ...value, discriminator: 0 })
-  ) as Serializer<CreateInstructionDataArgs, CreateInstructionData>;
+  ) as Serializer<ExcavateInstructionDataArgs, ExcavateInstructionData>;
 }
 
-// Args.
-export type CreateInstructionArgs = CreateInstructionDataArgs;
-
 // Instruction.
-export function create(
-  context: Pick<Context, 'identity' | 'payer' | 'programs'>,
-  input: CreateInstructionAccounts & CreateInstructionArgs
+export function excavate(
+  context: Pick<Context, 'payer' | 'programs'>,
+  input: ExcavateInstructionAccounts
 ): TransactionBuilder {
   // Program ID.
   const programId = context.programs.getPublicKey(
@@ -84,35 +78,44 @@ export function create(
 
   // Accounts.
   const resolvedAccounts = {
-    address: {
+    asset: {
       index: 0,
       isWritable: true as boolean,
-      value: input.address ?? null,
+      value: input.asset ?? null,
     },
-    authority: {
+    collection: {
       index: 1,
-      isWritable: false as boolean,
-      value: input.authority ?? null,
+      isWritable: true as boolean,
+      value: input.collection ?? null,
     },
     payer: {
       index: 2,
       isWritable: true as boolean,
       value: input.payer ?? null,
     },
-    systemProgram: {
+    slotTracker: {
       index: 3,
+      isWritable: true as boolean,
+      value: input.slotTracker ?? null,
+    },
+    glyphSigner: {
+      index: 4,
+      isWritable: false as boolean,
+      value: input.glyphSigner ?? null,
+    },
+    systemProgram: {
+      index: 5,
       isWritable: false as boolean,
       value: input.systemProgram ?? null,
     },
+    mplCore: {
+      index: 6,
+      isWritable: false as boolean,
+      value: input.mplCore ?? null,
+    },
   } satisfies ResolvedAccountsWithIndices;
 
-  // Arguments.
-  const resolvedArgs: CreateInstructionArgs = { ...input };
-
   // Default values.
-  if (!resolvedAccounts.authority.value) {
-    resolvedAccounts.authority.value = context.identity.publicKey;
-  }
   if (!resolvedAccounts.payer.value) {
     resolvedAccounts.payer.value = context.payer;
   }
@@ -137,12 +140,10 @@ export function create(
   );
 
   // Data.
-  const data = getCreateInstructionDataSerializer().serialize(
-    resolvedArgs as CreateInstructionDataArgs
-  );
+  const data = getExcavateInstructionDataSerializer().serialize({});
 
   // Bytes Created On Chain.
-  const bytesCreatedOnChain = getMyAccountSize() + ACCOUNT_HEADER_SIZE;
+  const bytesCreatedOnChain = 0;
 
   return transactionBuilder([
     { instruction: { keys, programId, data }, signers, bytesCreatedOnChain },

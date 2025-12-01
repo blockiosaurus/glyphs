@@ -7,10 +7,18 @@
 
 use borsh::BorshDeserialize;
 use borsh::BorshSerialize;
+use num_derive::FromPrimitive;
 
-#[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
+#[derive(
+    BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq, PartialOrd, Hash, FromPrimitive,
+)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct MyData {
-    pub field1: u16,
-    pub field2: u32,
+pub enum Rarity {
+    Stone,
+    Jade,
+    Bronze,
+    Silver,
+    Gold,
+    Obsidian,
+    Neon,
 }

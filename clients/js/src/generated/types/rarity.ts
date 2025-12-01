@@ -8,16 +8,21 @@
 
 import { Serializer, scalarEnum } from '@metaplex-foundation/umi/serializers';
 
-export enum Key {
-  Uninitialized,
-  SlotTracker,
+export enum Rarity {
+  Stone,
+  Jade,
+  Bronze,
+  Silver,
+  Gold,
+  Obsidian,
+  Neon,
 }
 
-export type KeyArgs = Key;
+export type RarityArgs = Rarity;
 
-export function getKeySerializer(): Serializer<KeyArgs, Key> {
-  return scalarEnum<Key>(Key, { description: 'Key' }) as Serializer<
-    KeyArgs,
-    Key
+export function getRaritySerializer(): Serializer<RarityArgs, Rarity> {
+  return scalarEnum<Rarity>(Rarity, { description: 'Rarity' }) as Serializer<
+    RarityArgs,
+    Rarity
   >;
 }

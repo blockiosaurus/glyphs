@@ -54,6 +54,71 @@ export class SerializationErrorError extends ProgramError {
 codeToErrorMap.set(0x2, SerializationErrorError);
 nameToErrorMap.set('SerializationError', SerializationErrorError);
 
+/** InvalidMplCoreProgram: Invalid MPL Core Program */
+export class InvalidMplCoreProgramError extends ProgramError {
+  override readonly name: string = 'InvalidMplCoreProgram';
+
+  readonly code: number = 0x3; // 3
+
+  constructor(program: Program, cause?: Error) {
+    super('Invalid MPL Core Program', program, cause);
+  }
+}
+codeToErrorMap.set(0x3, InvalidMplCoreProgramError);
+nameToErrorMap.set('InvalidMplCoreProgram', InvalidMplCoreProgramError);
+
+/** InvalidSlotTracker: Invalid Slot Tracker */
+export class InvalidSlotTrackerError extends ProgramError {
+  override readonly name: string = 'InvalidSlotTracker';
+
+  readonly code: number = 0x4; // 4
+
+  constructor(program: Program, cause?: Error) {
+    super('Invalid Slot Tracker', program, cause);
+  }
+}
+codeToErrorMap.set(0x4, InvalidSlotTrackerError);
+nameToErrorMap.set('InvalidSlotTracker', InvalidSlotTrackerError);
+
+/** InvalidGlyphSigner: Invalid Glyph Signer */
+export class InvalidGlyphSignerError extends ProgramError {
+  override readonly name: string = 'InvalidGlyphSigner';
+
+  readonly code: number = 0x5; // 5
+
+  constructor(program: Program, cause?: Error) {
+    super('Invalid Glyph Signer', program, cause);
+  }
+}
+codeToErrorMap.set(0x5, InvalidGlyphSignerError);
+nameToErrorMap.set('InvalidGlyphSigner', InvalidGlyphSignerError);
+
+/** NumericalOverflow: Numerical Overflow */
+export class NumericalOverflowError extends ProgramError {
+  override readonly name: string = 'NumericalOverflow';
+
+  readonly code: number = 0x6; // 6
+
+  constructor(program: Program, cause?: Error) {
+    super('Numerical Overflow', program, cause);
+  }
+}
+codeToErrorMap.set(0x6, NumericalOverflowError);
+nameToErrorMap.set('NumericalOverflow', NumericalOverflowError);
+
+/** AlreadyExcavated: Already Excavated */
+export class AlreadyExcavatedError extends ProgramError {
+  override readonly name: string = 'AlreadyExcavated';
+
+  readonly code: number = 0x7; // 7
+
+  constructor(program: Program, cause?: Error) {
+    super('Already Excavated', program, cause);
+  }
+}
+codeToErrorMap.set(0x7, AlreadyExcavatedError);
+nameToErrorMap.set('AlreadyExcavated', AlreadyExcavatedError);
+
 /**
  * Attempts to resolve a custom program error from the provided error code.
  * @category Errors

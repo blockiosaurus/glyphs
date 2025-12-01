@@ -4,20 +4,18 @@ use shank::{ShankContext, ShankInstruction};
 #[derive(BorshDeserialize, BorshSerialize, Clone, Debug, ShankContext, ShankInstruction)]
 #[rustfmt::skip]
 pub enum BglGlyphsInstruction {
-    /// Create My Account.
-    /// A detailed description of the instruction.
-    #[account(0, writable, signer, name="address", desc = "The address of the new account")]
-    #[account(1, name="authority", desc = "The authority of the new account")]
+    /// Excavate a Glyph
+    /// Creates a Glyph asset of the appropriate rarity.
+    #[account(0, writable, signer, name="asset", desc = "The asset to be created")]
+    #[account(1, writable, name="collection", desc = "The collection to which the asset belongs")]
     #[account(2, writable, signer, name="payer", desc = "The account paying for the storage fees")]
-    #[account(3, name="system_program", desc = "The system program")]
-    Create(CreateArgs),
+    #[account(3, writable, name="slot_tracker", desc = "The slot tracker account")]
+    #[account(4, name="glyph_signer", desc = "The global signer for the Glyph program")]
+    #[account(5, name="system_program", desc = "The system program")]
+    #[account(6, name="mpl_core", desc = "The mpl_core program")]
+    Excavate(ExcavateArgs),
 }
 
 #[repr(C)]
 #[derive(BorshSerialize, BorshDeserialize, PartialEq, Eq, Debug, Clone)]
-pub struct CreateArgs {
-    /// Some description for arg1.
-    pub arg1: u16,
-    /// Some description for arg2.
-    pub arg2: u32,
-}
+pub struct ExcavateArgs {}

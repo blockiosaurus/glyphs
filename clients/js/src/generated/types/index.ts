@@ -7,4 +7,4 @@
  */
 
 export * from './key';
-export * from './myData';
+export * from './rarity';

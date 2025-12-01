@@ -3,22 +3,22 @@
   "name": "bgl_glyphs_program",
   "instructions": [
     {
-      "name": "Create",
+      "name": "Excavate",
       "accounts": [
         {
-          "name": "address",
+          "name": "asset",
           "isMut": true,
           "isSigner": true,
           "docs": [
-            "The address of the new account"
+            "The asset to be created"
           ]
         },
         {
-          "name": "authority",
-          "isMut": false,
+          "name": "collection",
+          "isMut": true,
           "isSigner": false,
           "docs": [
-            "The authority of the new account"
+            "The collection to which the asset belongs"
           ]
         },
         {
@@ -30,19 +30,43 @@
           ]
         },
         {
+          "name": "slotTracker",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "The slot tracker account"
+          ]
+        },
+        {
+          "name": "glyphSigner",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The global signer for the Glyph program"
+          ]
+        },
+        {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false,
           "docs": [
             "The system program"
           ]
+        },
+        {
+          "name": "mplCore",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The mpl_core program"
+          ]
         }
       ],
       "args": [
         {
-          "name": "createArgs",
+          "name": "excavateArgs",
           "type": {
-            "defined": "CreateArgs"
+            "defined": "ExcavateArgs"
           }
         }
       ],
@@ -54,7 +78,7 @@
   ],
   "accounts": [
     {
-      "name": "MyAccount",
+      "name": "SlotTracker",
       "type": {
         "kind": "struct",
         "fields": [
@@ -65,32 +89,8 @@
             }
           },
           {
-            "name": "authority",
-            "type": "publicKey"
-          },
-          {
-            "name": "data",
-            "type": {
-              "defined": "MyData"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "MyPdaAccount",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "key",
-            "type": {
-              "defined": "Key"
-            }
-          },
-          {
-            "name": "bump",
-            "type": "u8"
+            "name": "lastSlot",
+            "type": "u64"
           }
         ]
       }
@@ -98,35 +98,10 @@
   ],
   "types": [
     {
-      "name": "CreateArgs",
+      "name": "ExcavateArgs",
       "type": {
         "kind": "struct",
-        "fields": [
-          {
-            "name": "arg1",
-            "type": "u16"
-          },
-          {
-            "name": "arg2",
-            "type": "u32"
-          }
-        ]
-      }
-    },
-    {
-      "name": "MyData",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "field1",
-            "type": "u16"
-          },
-          {
-            "name": "field2",
-            "type": "u32"
-          }
-        ]
+        "fields": []
       }
     },
     {
@@ -138,10 +113,36 @@
             "name": "Uninitialized"
           },
           {
-            "name": "MyAccount"
+            "name": "SlotTracker"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Rarity",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Stone"
           },
           {
-            "name": "MyPdaAccount"
+            "name": "Jade"
+          },
+          {
+            "name": "Bronze"
+          },
+          {
+            "name": "Silver"
+          },
+          {
+            "name": "Gold"
+          },
+          {
+            "name": "Obsidian"
+          },
+          {
+            "name": "Neon"
           }
         ]
       }
@@ -162,6 +163,31 @@
       "code": 2,
       "name": "SerializationError",
       "msg": "Error serializing account"
+    },
+    {
+      "code": 3,
+      "name": "InvalidMplCoreProgram",
+      "msg": "Invalid MPL Core Program"
+    },
+    {
+      "code": 4,
+      "name": "InvalidSlotTracker",
+      "msg": "Invalid Slot Tracker"
+    },
+    {
+      "code": 5,
+      "name": "InvalidGlyphSigner",
+      "msg": "Invalid Glyph Signer"
+    },
+    {
+      "code": 6,
+      "name": "NumericalOverflow",
+      "msg": "Numerical Overflow"
+    },
+    {
+      "code": 7,
+      "name": "AlreadyExcavated",
+      "msg": "Already Excavated"
     }
   ],
   "metadata": {
