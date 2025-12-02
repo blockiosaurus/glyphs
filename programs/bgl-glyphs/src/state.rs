@@ -74,13 +74,13 @@ impl Rarity {
 
     pub fn uri(&self) -> String {
         match self {
-            Rarity::Stone => "https://glyphs.quest/stone.json".to_string(),
-            Rarity::Jade => "https://glyphs.quest/jade.json".to_string(),
-            Rarity::Bronze => "https://glyphs.quest/bronze.json".to_string(),
-            Rarity::Silver => "https://glyphs.quest/silver.json".to_string(),
-            Rarity::Gold => "https://glyphs.quest/gold.json".to_string(),
-            Rarity::Obsidian => "https://glyphs.quest/obsidian.json".to_string(),
-            Rarity::Neon => "https://glyphs.quest/neon.json".to_string(),
+            Rarity::Stone => "https://www.glyphs.quest/stone.json".to_string(),
+            Rarity::Jade => "https://www.glyphs.quest/jade.json".to_string(),
+            Rarity::Bronze => "https://www.glyphs.quest/bronze.json".to_string(),
+            Rarity::Silver => "https://www.glyphs.quest/silver.json".to_string(),
+            Rarity::Gold => "https://www.glyphs.quest/gold.json".to_string(),
+            Rarity::Obsidian => "https://www.glyphs.quest/obsidian.json".to_string(),
+            Rarity::Neon => "https://www.glyphs.quest/neon.json".to_string(),
         }
     }
 

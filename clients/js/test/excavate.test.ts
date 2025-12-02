@@ -33,7 +33,7 @@ test('it can excavate a glyph', async (t) => {
       address: COLLECTION_ID,
     },
     name: 'Stone Glyph',
-    uri: 'https://glyphs.quest/stone.json',
+    uri: 'https://www.glyphs.quest/stone.json',
     attributes: {
       authority: { type: 'None' },
       attributeList: [
