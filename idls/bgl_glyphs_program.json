@@ -39,7 +39,7 @@
         },
         {
           "name": "glyphSigner",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false,
           "docs": [
             "The global signer for the Glyph program"

@@ -50,7 +50,7 @@ impl Excavate {
             self.slot_tracker,
             false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+        accounts.push(solana_program::instruction::AccountMeta::new(
             self.glyph_signer,
             false,
         ));
@@ -92,7 +92,7 @@ impl ExcavateInstructionData {
 ///   1. `[writable, optional]` collection (default to `G1yphsa2NejzXMsUn2yDpNrT92DXpjucG47kxLvgVKft`)
 ///   2. `[writable, signer]` payer
 ///   3. `[writable, optional]` slot_tracker (default to `4F1xoqW362RXP4YxjoTsMguWQWJYsCDwqG2VJxTgZLUe`)
-///   4. `[optional]` glyph_signer (default to `3skJESN1mj5EMdYMA52ug8TUnsGFxF646F9nXow3CUru`)
+///   4. `[writable, optional]` glyph_signer (default to `3skJESN1mj5EMdYMA52ug8TUnsGFxF646F9nXow3CUru`)
 ///   5. `[optional]` system_program (default to `11111111111111111111111111111111`)
 ///   6. `[optional]` mpl_core (default to `CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d`)
 #[derive(Default)]
@@ -306,7 +306,7 @@ impl<'a, 'b> ExcavateCpi<'a, 'b> {
             *self.slot_tracker.key,
             false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+        accounts.push(solana_program::instruction::AccountMeta::new(
             *self.glyph_signer.key,
             false,
         ));
@@ -361,7 +361,7 @@ impl<'a, 'b> ExcavateCpi<'a, 'b> {
 ///   1. `[writable]` collection
 ///   2. `[writable, signer]` payer
 ///   3. `[writable]` slot_tracker
-///   4. `[]` glyph_signer
+///   4. `[writable]` glyph_signer
 ///   5. `[]` system_program
 ///   6. `[]` mpl_core
 pub struct ExcavateCpiBuilder<'a, 'b> {

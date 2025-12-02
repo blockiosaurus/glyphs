@@ -4,8 +4,8 @@ use mpl_core::types::{Attribute, Attributes, Plugin, PluginAuthority, PluginAuth
 use mpl_utils::create_or_allocate_account_raw;
 use solana_program::clock::Clock;
 use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, msg, pubkey::Pubkey, system_program,
-    sysvar::Sysvar,
+    account_info::AccountInfo, entrypoint::ProgramResult, msg, program::invoke,
+    pubkey::Pubkey, system_instruction, system_program, sysvar::Sysvar,
 };
 
 use crate::error::BglGlyphsError;
@@ -13,7 +13,7 @@ use crate::instruction::accounts::ExcavateAccounts;
 use crate::instruction::{BglGlyphsInstruction, ExcavateArgs};
 use crate::state::{
     Key, Rarity, SlotTracker, COLLECTION_KEY, GLOBAL_SIGNER, GLOBAL_SIGNER_BUMP, GLOBAL_SIGNER_KEY,
-    PREFIX, SLOT_TRACKER, SLOT_TRACKER_BUMP, SLOT_TRACKER_KEY,
+    MINT_FEE, PREFIX, SLOT_TRACKER, SLOT_TRACKER_BUMP, SLOT_TRACKER_KEY,
 };
 
 pub fn process_instruction<'a>(
@@ -102,6 +102,20 @@ fn excavate<'a>(accounts: &'a [AccountInfo<'a>], _args: ExcavateArgs) -> Program
     }
 
     slot_tracker.save(ctx.accounts.slot_tracker)?;
+
+    // Transfer minting fee to the global signer PDA
+    invoke(
+        &system_instruction::transfer(
+            ctx.accounts.payer.key,
+            ctx.accounts.glyph_signer.key,
+            MINT_FEE,
+        ),
+        &[
+            ctx.accounts.payer.clone(),
+            ctx.accounts.glyph_signer.clone(),
+            ctx.accounts.system_program.clone(),
+        ],
+    )?;
 
     let rarity = Rarity::get_rarity()?;
 

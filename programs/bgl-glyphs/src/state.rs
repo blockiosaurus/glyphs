@@ -20,6 +20,8 @@ pub const GLOBAL_SIGNER_KEY: Pubkey = pubkey!("3skJESN1mj5EMdYMA52ug8TUnsGFxF646
 pub const GLOBAL_SIGNER_BUMP: u8 = 252;
 pub const SLOT_TRACKER_KEY: Pubkey = pubkey!("4F1xoqW362RXP4YxjoTsMguWQWJYsCDwqG2VJxTgZLUe");
 pub const SLOT_TRACKER_BUMP: u8 = 255;
+/// Minting fee in lamports (0.001 SOL)
+pub const MINT_FEE: u64 = 1_000_000;
 // TODO: Update with the actual collection address before deployment
 pub const COLLECTION_KEY: Pubkey = pubkey!("G1yphsa2NejzXMsUn2yDpNrT92DXpjucG47kxLvgVKft");
 

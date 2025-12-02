@@ -13,7 +13,8 @@
     "lint:fix": "eslint --fix --ext js,ts,tsx src",
     "format": "prettier --check src test",
     "format:fix": "prettier --write src test",
-    "create-collection": "pnpm build && node dist/scripts/create-collection.js"
+    "create-collection": "pnpm build && node dist/scripts/create-collection.js",
+    "hunt-rare": "pnpm build && node dist/scripts/hunt-rare.js"
   },
   "files": [
     "/dist/src"

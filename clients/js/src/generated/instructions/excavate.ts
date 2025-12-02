@@ -101,7 +101,7 @@ export function excavate(
     },
     glyphSigner: {
       index: 4,
-      isWritable: false as boolean,
+      isWritable: true as boolean,
       value: input.glyphSigner ?? null,
     },
     systemProgram: {
