@@ -1,5 +1,5 @@
 {
-  "name": "@metaplex-foundation/bgl-glyphs",
+  "name": "@breadheads/bgl-glyphs",
   "version": "0.1.0",
   "description": "Discover Glyphs and uncover their true meaning.",
   "main": "dist/src/index.js",
@@ -12,7 +12,8 @@
     "lint": "eslint --ext js,ts,tsx src",
     "lint:fix": "eslint --fix --ext js,ts,tsx src",
     "format": "prettier --check src test",
-    "format:fix": "prettier --write src test"
+    "format:fix": "prettier --write src test",
+    "create-collection": "pnpm build && node dist/scripts/create-collection.js"
   },
   "files": [
     "/dist/src"
@@ -27,7 +28,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@metaplex-foundation/mpl-core": "^0.4.5",
-    "@metaplex-foundation/mpl-toolbox": "^0.8.0"
+    "@metaplex-foundation/mpl-toolbox": "^0.8.0",
+    "dotenv": "^17.2.3",
+    "@metaplex-foundation/umi-bundle-defaults": "^0.8.2"
   },
   "peerDependencies": {
     "@metaplex-foundation/umi": "^0.8.2"
@@ -63,5 +66,5 @@
       }
     }
   },
-  "packageManager": "pnpm@8.2.0"
+  "packageManager": "pnpm@8.9.0"
 }
