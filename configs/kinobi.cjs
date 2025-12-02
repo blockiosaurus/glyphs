@@ -30,15 +30,26 @@ kinobi.update(
 // );
 
 // Update instructions.
-// kinobi.update(
-//   new k.updateInstructionsVisitor({
-//     create: {
-//       byteDeltas: [
-//         k.instructionByteDeltaNode(k.accountLinkNode("myAccount")),
-//       ],
-//     },
-//   })
-// );
+kinobi.update(
+  new k.updateInstructionsVisitor({
+    excavate: {
+      accounts: {
+        collection: {
+          defaultValue: k.publicKeyValueNode("G1yphsa2NejzXMsUn2yDpNrT92DXpjucG47kxLvgVKft"),
+        },
+        glyphSigner: {
+          defaultValue: k.publicKeyValueNode("3skJESN1mj5EMdYMA52ug8TUnsGFxF646F9nXow3CUru"),
+        },
+        mplCore: {
+          defaultValue: k.publicKeyValueNode("CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"),
+        },
+        slotTracker: {
+          defaultValue: k.publicKeyValueNode("4F1xoqW362RXP4YxjoTsMguWQWJYsCDwqG2VJxTgZLUe"),
+        },
+      }
+    },
+  })
+);
 
 // Set ShankAccount discriminator.
 const key = (name) => ({ field: "key", value: k.enumValueNode("Key", name) });

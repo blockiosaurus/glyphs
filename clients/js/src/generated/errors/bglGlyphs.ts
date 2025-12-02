@@ -119,6 +119,58 @@ export class AlreadyExcavatedError extends ProgramError {
 codeToErrorMap.set(0x7, AlreadyExcavatedError);
 nameToErrorMap.set('AlreadyExcavated', AlreadyExcavatedError);
 
+/** InvalidCollection: Invalid Collection */
+export class InvalidCollectionError extends ProgramError {
+  override readonly name: string = 'InvalidCollection';
+
+  readonly code: number = 0x8; // 8
+
+  constructor(program: Program, cause?: Error) {
+    super('Invalid Collection', program, cause);
+  }
+}
+codeToErrorMap.set(0x8, InvalidCollectionError);
+nameToErrorMap.set('InvalidCollection', InvalidCollectionError);
+
+/** InvalidAsset: Invalid Asset */
+export class InvalidAssetError extends ProgramError {
+  override readonly name: string = 'InvalidAsset';
+
+  readonly code: number = 0x9; // 9
+
+  constructor(program: Program, cause?: Error) {
+    super('Invalid Asset', program, cause);
+  }
+}
+codeToErrorMap.set(0x9, InvalidAssetError);
+nameToErrorMap.set('InvalidAsset', InvalidAssetError);
+
+/** MissingSignature: Missing Required Signature */
+export class MissingSignatureError extends ProgramError {
+  override readonly name: string = 'MissingSignature';
+
+  readonly code: number = 0xa; // 10
+
+  constructor(program: Program, cause?: Error) {
+    super('Missing Required Signature', program, cause);
+  }
+}
+codeToErrorMap.set(0xa, MissingSignatureError);
+nameToErrorMap.set('MissingSignature', MissingSignatureError);
+
+/** InvalidSlotTrackerKey: Invalid Slot Tracker Key */
+export class InvalidSlotTrackerKeyError extends ProgramError {
+  override readonly name: string = 'InvalidSlotTrackerKey';
+
+  readonly code: number = 0xb; // 11
+
+  constructor(program: Program, cause?: Error) {
+    super('Invalid Slot Tracker Key', program, cause);
+  }
+}
+codeToErrorMap.set(0xb, InvalidSlotTrackerKeyError);
+nameToErrorMap.set('InvalidSlotTrackerKey', InvalidSlotTrackerKeyError);
+
 /**
  * Attempts to resolve a custom program error from the provided error code.
  * @category Errors

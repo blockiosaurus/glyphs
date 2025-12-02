@@ -188,6 +188,26 @@
       "code": 7,
       "name": "AlreadyExcavated",
       "msg": "Already Excavated"
+    },
+    {
+      "code": 8,
+      "name": "InvalidCollection",
+      "msg": "Invalid Collection"
+    },
+    {
+      "code": 9,
+      "name": "InvalidAsset",
+      "msg": "Invalid Asset"
+    },
+    {
+      "code": 10,
+      "name": "MissingSignature",
+      "msg": "Missing Required Signature"
+    },
+    {
+      "code": 11,
+      "name": "InvalidSlotTrackerKey",
+      "msg": "Invalid Slot Tracker Key"
     }
   ],
   "metadata": {

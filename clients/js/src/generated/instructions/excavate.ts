@@ -12,6 +12,7 @@ import {
   PublicKey,
   Signer,
   TransactionBuilder,
+  publicKey,
   transactionBuilder,
 } from '@metaplex-foundation/umi';
 import {
@@ -31,17 +32,17 @@ export type ExcavateInstructionAccounts = {
   /** The asset to be created */
   asset: Signer;
   /** The collection to which the asset belongs */
-  collection: PublicKey | Pda;
+  collection?: PublicKey | Pda;
   /** The account paying for the storage fees */
   payer?: Signer;
   /** The slot tracker account */
-  slotTracker: PublicKey | Pda;
+  slotTracker?: PublicKey | Pda;
   /** The global signer for the Glyph program */
-  glyphSigner: PublicKey | Pda;
+  glyphSigner?: PublicKey | Pda;
   /** The system program */
   systemProgram?: PublicKey | Pda;
   /** The mpl_core program */
-  mplCore: PublicKey | Pda;
+  mplCore?: PublicKey | Pda;
 };
 
 // Data.
@@ -116,8 +117,23 @@ export function excavate(
   } satisfies ResolvedAccountsWithIndices;
 
   // Default values.
+  if (!resolvedAccounts.collection.value) {
+    resolvedAccounts.collection.value = publicKey(
+      'G1yphsa2NejzXMsUn2yDpNrT92DXpjucG47kxLvgVKft'
+    );
+  }
   if (!resolvedAccounts.payer.value) {
     resolvedAccounts.payer.value = context.payer;
+  }
+  if (!resolvedAccounts.slotTracker.value) {
+    resolvedAccounts.slotTracker.value = publicKey(
+      '4F1xoqW362RXP4YxjoTsMguWQWJYsCDwqG2VJxTgZLUe'
+    );
+  }
+  if (!resolvedAccounts.glyphSigner.value) {
+    resolvedAccounts.glyphSigner.value = publicKey(
+      '3skJESN1mj5EMdYMA52ug8TUnsGFxF646F9nXow3CUru'
+    );
   }
   if (!resolvedAccounts.systemProgram.value) {
     resolvedAccounts.systemProgram.value = context.programs.getPublicKey(
@@ -125,6 +141,11 @@ export function excavate(
       '11111111111111111111111111111111'
     );
     resolvedAccounts.systemProgram.isWritable = false;
+  }
+  if (!resolvedAccounts.mplCore.value) {
+    resolvedAccounts.mplCore.value = publicKey(
+      'CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d'
+    );
   }
 
   // Accounts in order.

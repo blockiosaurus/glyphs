@@ -19,20 +19,17 @@ module.exports = {
       // You may configure which ones to fetch from the cluster when building
       // programs within the `configs/program-scripts/dump.sh` script.
       {
-        label: "Token Metadata",
-        programId: "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-        deployPath: getProgram("mpl_token_metadata.so"),
-      },
-      {
-        label: "SPL Noop",
-        programId: "noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV",
-        deployPath: getProgram("spl_noop.so"),
-      },
-      {
         label: "MPL Core",
         programId: "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d",
         deployPath: getProgram("mpl_core.so"),
       },
     ],
+    accounts: [
+      {
+        label: 'Glyphs Collection',
+        accountId: 'G1yphsa2NejzXMsUn2yDpNrT92DXpjucG47kxLvgVKft',
+        cluster: 'https://api.devnet.solana.com',
+      },
+    ]
   },
 };

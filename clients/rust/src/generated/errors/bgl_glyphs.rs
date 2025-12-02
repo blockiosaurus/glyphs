@@ -34,6 +34,18 @@ pub enum BglGlyphsError {
     /// 7 (0x7) - Already Excavated
     #[error("Already Excavated")]
     AlreadyExcavated,
+    /// 8 (0x8) - Invalid Collection
+    #[error("Invalid Collection")]
+    InvalidCollection,
+    /// 9 (0x9) - Invalid Asset
+    #[error("Invalid Asset")]
+    InvalidAsset,
+    /// 10 (0xA) - Missing Required Signature
+    #[error("Missing Required Signature")]
+    MissingSignature,
+    /// 11 (0xB) - Invalid Slot Tracker Key
+    #[error("Invalid Slot Tracker Key")]
+    InvalidSlotTrackerKey,
 }
 
 impl solana_program::program_error::PrintProgramError for BglGlyphsError {

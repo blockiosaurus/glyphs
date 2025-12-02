@@ -3,7 +3,6 @@ use mpl_core::instructions::CreateV1CpiBuilder;
 use mpl_core::types::{Attribute, Attributes, Plugin, PluginAuthority, PluginAuthorityPair};
 use mpl_utils::create_or_allocate_account_raw;
 use solana_program::clock::Clock;
-use solana_program::epoch_schedule::EpochSchedule;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, msg, pubkey::Pubkey, system_program,
     sysvar::Sysvar,
@@ -13,8 +12,8 @@ use crate::error::BglGlyphsError;
 use crate::instruction::accounts::ExcavateAccounts;
 use crate::instruction::{BglGlyphsInstruction, ExcavateArgs};
 use crate::state::{
-    Key, Rarity, SlotTracker, GLOBAL_SIGNER, GLOBAL_SIGNER_BUMP, GLOBAL_SIGNER_KEY, PREFIX,
-    SLOT_TRACKER, SLOT_TRACKER_BUMP, SLOT_TRACKER_KEY,
+    Key, Rarity, SlotTracker, COLLECTION_KEY, GLOBAL_SIGNER, GLOBAL_SIGNER_BUMP, GLOBAL_SIGNER_KEY,
+    PREFIX, SLOT_TRACKER, SLOT_TRACKER_BUMP, SLOT_TRACKER_KEY,
 };
 
 pub fn process_instruction<'a>(
@@ -35,16 +34,6 @@ fn excavate<'a>(accounts: &'a [AccountInfo<'a>], _args: ExcavateArgs) -> Program
     // Accounts.
     let ctx = ExcavateAccounts::context(accounts)?;
     let clock = Clock::get()?;
-    let epoch_schedule = EpochSchedule::get()?;
-
-    solana_program::msg!("Clock: {:?}", clock);
-    solana_program::msg!("Epoch: {:?}", epoch_schedule);
-    solana_program::msg!(
-        "1st Slot: {:?}",
-        epoch_schedule.get_first_slot_in_epoch(clock.epoch)
-    );
-
-    solana_program::msg!("Rarity: {:?}", Rarity::get_rarity()?);
 
     // Guards.
     if *ctx.accounts.slot_tracker.key != SLOT_TRACKER_KEY {
@@ -63,12 +52,18 @@ fn excavate<'a>(accounts: &'a [AccountInfo<'a>], _args: ExcavateArgs) -> Program
         return Err(BglGlyphsError::InvalidMplCoreProgram.into());
     }
 
-    // Execute the instruction.
-    let current_slot = Clock::get()?.slot;
+    if *ctx.accounts.collection.key != COLLECTION_KEY {
+        return Err(BglGlyphsError::InvalidCollection.into());
+    }
 
-    // let (tracker, tracker_bump) =
-    //     Pubkey::find_program_address(&[PREFIX.as_bytes(), SLOT_TRACKER.as_bytes()], &crate::ID);
-    // solana_program::msg!("Tracker: {:?}, Bump: {:?}", tracker, tracker_bump);
+    // Verify required signers
+    if !ctx.accounts.payer.is_signer {
+        return Err(BglGlyphsError::MissingSignature.into());
+    }
+
+    if !ctx.accounts.asset.is_signer {
+        return Err(BglGlyphsError::MissingSignature.into());
+    }
 
     // Create the slot tracker if it doesn't exist.
     let mut slot_tracker = if *ctx.accounts.slot_tracker.owner == system_program::ID
@@ -89,25 +84,26 @@ fn excavate<'a>(accounts: &'a [AccountInfo<'a>], _args: ExcavateArgs) -> Program
 
         SlotTracker {
             key: Key::SlotTracker,
-            last_slot: current_slot - 1,
+            last_slot: clock.slot - 1,
         }
     } else {
-        SlotTracker::load(ctx.accounts.slot_tracker)?
+        let tracker = SlotTracker::load(ctx.accounts.slot_tracker)?;
+        // Validate the loaded slot tracker has the correct key type
+        if !matches!(tracker.key, Key::SlotTracker) {
+            return Err(BglGlyphsError::InvalidSlotTrackerKey.into());
+        }
+        tracker
     };
 
-    if slot_tracker.last_slot >= current_slot {
+    if slot_tracker.last_slot >= clock.slot {
         return Err(BglGlyphsError::AlreadyExcavated.into());
     } else {
-        slot_tracker.last_slot = current_slot;
+        slot_tracker.last_slot = clock.slot;
     }
 
     slot_tracker.save(ctx.accounts.slot_tracker)?;
 
     let rarity = Rarity::get_rarity()?;
-
-    // let (signer, bump) =
-    //     Pubkey::find_program_address(&[PREFIX.as_bytes(), GLOBAL_SIGNER.as_bytes()], &crate::ID);
-    // solana_program::msg!("Signer: {:?}, Bump: {:?}", signer, bump);
 
     // Create the Asset.
     CreateV1CpiBuilder::new(ctx.accounts.mpl_core)
@@ -116,8 +112,8 @@ fn excavate<'a>(accounts: &'a [AccountInfo<'a>], _args: ExcavateArgs) -> Program
         .payer(ctx.accounts.payer)
         .authority(Some(ctx.accounts.glyph_signer))
         .system_program(ctx.accounts.system_program)
-        .name("TEST NAME".to_owned())
-        .uri("TEST_URI".to_owned())
+        .name(rarity.name())
+        .uri(rarity.uri())
         .plugins(vec![PluginAuthorityPair {
             plugin: Plugin::Attributes(Attributes {
                 attribute_list: vec![

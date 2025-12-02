@@ -22,9 +22,9 @@
     "access": "public",
     "registry": "https://registry.npmjs.org"
   },
-  "homepage": "https://metaplex.com",
-  "repository": "https://github.com/metaplex-foundation/bgl-glyphs.git",
-  "author": "Metaplex Maintainers <contact@metaplex.com>",
+  "homepage": "https://www.glyphs.quest",
+  "repository": "https://github.com/blockiosaurus/bgl-glyphs.git",
+  "author": "Breadheads <contact@breadheads.io>",
   "license": "Apache-2.0",
   "dependencies": {
     "@metaplex-foundation/mpl-core": "^0.4.5",

@@ -20,6 +20,8 @@ pub const GLOBAL_SIGNER_KEY: Pubkey = pubkey!("3skJESN1mj5EMdYMA52ug8TUnsGFxF646
 pub const GLOBAL_SIGNER_BUMP: u8 = 252;
 pub const SLOT_TRACKER_KEY: Pubkey = pubkey!("4F1xoqW362RXP4YxjoTsMguWQWJYsCDwqG2VJxTgZLUe");
 pub const SLOT_TRACKER_BUMP: u8 = 255;
+// TODO: Update with the actual collection address before deployment
+pub const COLLECTION_KEY: Pubkey = pubkey!("G1yphsa2NejzXMsUn2yDpNrT92DXpjucG47kxLvgVKft");
 
 #[repr(C)]
 #[derive(Clone, BorshSerialize, BorshDeserialize, Debug)]
@@ -52,12 +54,35 @@ pub enum Rarity {
 // }
 
 impl Rarity {
-    // const STONE_MASK: u64 = (power_of_two!(0) - 1) as u64; // 1 per Slot
     const JADE_MASK: u64 = (power_of_two!(10) - 1) as u64; // 1 per 2^10 Slots
     const SILVER_MASK: u64 = (power_of_two!(20) - 1) as u64; // 1 per 2^20 Slots
     const GOLD_MASK: u64 = (power_of_two!(22) - 1) as u64; // 1 per 2^22 Slots
     const OBSIDIAN_MASK: u64 = (power_of_two!(24) - 1) as u64; // 1 per 2^24 Slots
     const NEON_MASK: u64 = (power_of_two!(26) - 1) as u64; // 1 per 2^26 Slots
+
+    pub fn name(&self) -> String {
+        match self {
+            Rarity::Stone => "Stone Glyph".to_string(),
+            Rarity::Jade => "Jade Glyph".to_string(),
+            Rarity::Bronze => "Bronze Glyph".to_string(),
+            Rarity::Silver => "Silver Glyph".to_string(),
+            Rarity::Gold => "Gold Glyph".to_string(),
+            Rarity::Obsidian => "Obsidian Glyph".to_string(),
+            Rarity::Neon => "Neon Glyph".to_string(),
+        }
+    }
+
+    pub fn uri(&self) -> String {
+        match self {
+            Rarity::Stone => "https://glyphs.quest/stone.json".to_string(),
+            Rarity::Jade => "https://glyphs.quest/jade.json".to_string(),
+            Rarity::Bronze => "https://glyphs.quest/bronze.json".to_string(),
+            Rarity::Silver => "https://glyphs.quest/silver.json".to_string(),
+            Rarity::Gold => "https://glyphs.quest/gold.json".to_string(),
+            Rarity::Obsidian => "https://glyphs.quest/obsidian.json".to_string(),
+            Rarity::Neon => "https://glyphs.quest/neon.json".to_string(),
+        }
+    }
 
     pub fn get_rarity() -> Result<Self, ProgramError> {
         let clock = Clock::get()?;

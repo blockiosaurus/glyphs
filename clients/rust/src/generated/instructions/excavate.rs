@@ -89,12 +89,12 @@ impl ExcavateInstructionData {
 /// ### Accounts:
 ///
 ///   0. `[writable, signer]` asset
-///   1. `[writable]` collection
+///   1. `[writable, optional]` collection (default to `G1yphsa2NejzXMsUn2yDpNrT92DXpjucG47kxLvgVKft`)
 ///   2. `[writable, signer]` payer
-///   3. `[writable]` slot_tracker
-///   4. `[]` glyph_signer
+///   3. `[writable, optional]` slot_tracker (default to `4F1xoqW362RXP4YxjoTsMguWQWJYsCDwqG2VJxTgZLUe`)
+///   4. `[optional]` glyph_signer (default to `3skJESN1mj5EMdYMA52ug8TUnsGFxF646F9nXow3CUru`)
 ///   5. `[optional]` system_program (default to `11111111111111111111111111111111`)
-///   6. `[]` mpl_core
+///   6. `[optional]` mpl_core (default to `CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d`)
 #[derive(Default)]
 pub struct ExcavateBuilder {
     asset: Option<solana_program::pubkey::Pubkey>,
@@ -117,6 +117,7 @@ impl ExcavateBuilder {
         self.asset = Some(asset);
         self
     }
+    /// `[optional account, default to 'G1yphsa2NejzXMsUn2yDpNrT92DXpjucG47kxLvgVKft']`
     /// The collection to which the asset belongs
     #[inline(always)]
     pub fn collection(&mut self, collection: solana_program::pubkey::Pubkey) -> &mut Self {
@@ -129,12 +130,14 @@ impl ExcavateBuilder {
         self.payer = Some(payer);
         self
     }
+    /// `[optional account, default to '4F1xoqW362RXP4YxjoTsMguWQWJYsCDwqG2VJxTgZLUe']`
     /// The slot tracker account
     #[inline(always)]
     pub fn slot_tracker(&mut self, slot_tracker: solana_program::pubkey::Pubkey) -> &mut Self {
         self.slot_tracker = Some(slot_tracker);
         self
     }
+    /// `[optional account, default to '3skJESN1mj5EMdYMA52ug8TUnsGFxF646F9nXow3CUru']`
     /// The global signer for the Glyph program
     #[inline(always)]
     pub fn glyph_signer(&mut self, glyph_signer: solana_program::pubkey::Pubkey) -> &mut Self {
@@ -148,6 +151,7 @@ impl ExcavateBuilder {
         self.system_program = Some(system_program);
         self
     }
+    /// `[optional account, default to 'CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d']`
     /// The mpl_core program
     #[inline(always)]
     pub fn mpl_core(&mut self, mpl_core: solana_program::pubkey::Pubkey) -> &mut Self {
@@ -176,14 +180,22 @@ impl ExcavateBuilder {
     pub fn instruction(&self) -> solana_program::instruction::Instruction {
         let accounts = Excavate {
             asset: self.asset.expect("asset is not set"),
-            collection: self.collection.expect("collection is not set"),
+            collection: self.collection.unwrap_or(solana_program::pubkey!(
+                "G1yphsa2NejzXMsUn2yDpNrT92DXpjucG47kxLvgVKft"
+            )),
             payer: self.payer.expect("payer is not set"),
-            slot_tracker: self.slot_tracker.expect("slot_tracker is not set"),
-            glyph_signer: self.glyph_signer.expect("glyph_signer is not set"),
+            slot_tracker: self.slot_tracker.unwrap_or(solana_program::pubkey!(
+                "4F1xoqW362RXP4YxjoTsMguWQWJYsCDwqG2VJxTgZLUe"
+            )),
+            glyph_signer: self.glyph_signer.unwrap_or(solana_program::pubkey!(
+                "3skJESN1mj5EMdYMA52ug8TUnsGFxF646F9nXow3CUru"
+            )),
             system_program: self
                 .system_program
                 .unwrap_or(solana_program::pubkey!("11111111111111111111111111111111")),
-            mpl_core: self.mpl_core.expect("mpl_core is not set"),
+            mpl_core: self.mpl_core.unwrap_or(solana_program::pubkey!(
+                "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+            )),
         };
 
         accounts.instruction_with_remaining_accounts(&self.__remaining_accounts)

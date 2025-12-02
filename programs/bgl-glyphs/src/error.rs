@@ -39,6 +39,22 @@ pub enum BglGlyphsError {
     /// 7 - Already Excavated
     #[error("Already Excavated")]
     AlreadyExcavated,
+
+    /// 8 - Invalid Collection
+    #[error("Invalid Collection")]
+    InvalidCollection,
+
+    /// 9 - Invalid Asset
+    #[error("Invalid Asset")]
+    InvalidAsset,
+
+    /// 10 - Missing Required Signature
+    #[error("Missing Required Signature")]
+    MissingSignature,
+
+    /// 11 - Invalid Slot Tracker Key
+    #[error("Invalid Slot Tracker Key")]
+    InvalidSlotTrackerKey,
 }
 
 impl PrintProgramError for BglGlyphsError {
